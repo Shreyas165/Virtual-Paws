@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat with Your Pet</title>
+  <style>
+    /* Reset CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f8ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .chat-container {
+      width: 90%;
+      max-width: 500px;
+      height: 80%;
+      background-color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: fadeIn 1s ease;
+    }
+
+    /* Chatbox Section */
+    .chatbox {
+      flex-grow: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .messages {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Message Styles with Animations */
+    .message {
+      max-width: 75%;
+      padding: 10px 15px;
+      border-radius: 20px;
+      word-wrap: break-word;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: slideUp 0.3s forwards;
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .pet-message {
+      align-self: flex-start;
+      background-color: #e0e0e0;
+      color: #333;
+    }
+
+    /* Chat Input Section */
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
+
+    .chat-input input {
+      flex-grow: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      outline: none;
+      font-size: 16px;
+      margin-right: 10px;
+      transition: box-shadow 0.3s;
+    }
+
+    .chat-input input:focus {
+      box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+    }
+
+    .chat-input button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s, transform 0.1s;
+    }
+
+    .chat-input button:hover {
+      background-color: #45a049;
+    }
+
+    .chat-input button:active {
+      transform: scale(0.95);
+    }
+
+    /* Scrollbar Customization */
+    .chatbox::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .chatbox::-webkit-scrollbar-thumb {
+      background-color: #bbb;
+      border-radius: 10px;
+    }
+
+    .chatbox::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+    }
+
+    /* Keyframe Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+
+    <!-- Chatbox -->
+    <div class="chatbox" id="chatbox">
+      <div class="messages" id="chat-messages"></div>
+    </div>
+
+    <!-- Chat Input Section -->
+    <div class="chat-input">
+      <input type="text" id="user-message" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+
+  </div>
+
+  <script>
+    const chatMessages = document.getElementById('chat-messages');
+    const userMessageInput = document.getElementById('user-message');
+
+    function sendMessage() {
+      const userMessage = userMessageInput.value.trim();
+      if (userMessage) {
+        // Append the user's message
+        appendMessage(userMessage, 'user-message');
+        
+        // Clear the input field
+        userMessageInput.value = '';
+
+        // Check if the message is "hi"
+        if (userMessage.toLowerCase() === "hi") {
+          // Respond with "hi"
+          appendMessage("hi", 'pet-message');
+        } else {
+          // Simulate a pet response after a brief delay
+          setTimeout(() => {
+            const petResponse = getPetResponse();
+            appendMessage(petResponse, 'pet-message');
+          }, 1000);
+        }
+      }
+    }
+
+    function appendMessage(message, className) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message', className);
+      messageDiv.textContent = message;
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the bottom
+    }
+
+    function getPetResponse() {
+      const responses = [
+        "I'm here! 🐾",
+        "Let's play!",
+        "I'm hungry! 🍕",
+        "You're my best friend! ❤️",
+        "Do you love me? 🥺",
+        "Woof! Woof! 🐶",
+        "Meow! 🐱",
+        "Can we go outside? 🌳"
+      ];
+      return responses[Math.floor(Math.random() * responses.length)];
+    }
+  </script>
+</body>
+</html>

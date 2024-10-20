@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Paws</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e0f7fa;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      overflow: hidden;
+      animation: fadeIn 0.5s; /* Fade-in animation */
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .screen {
+      display: none;
+      animation: slideIn 0.5s forwards; /* Slide-in animation */
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .pet-avatar img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 50%;
+      animation: bounce 1s infinite alternate; /* Bouncing animation */
+      transition: transform 0.3s; /* Avatar transition */
+    }
+
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s; /* Transform for scaling effect */
+      animation: pulse 2s infinite; /* Pulse effect */
+    }
+
+    button:hover {
+      background-color: #45a049;
+      transform: scale(1.05); /* Scale effect on hover */
+    }
+
+    .level-bar {
+      background-color: #e0e0e0;
+      height: 20px;
+      border-radius: 5px;
+      margin: 5px 0;
+      overflow: hidden; /* Clip overflow */
+    }
+
+    .happiness, .hunger {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.5s ease-in-out; /* Smooth transition for filling bars */
+    }
+
+    .happiness {
+      background-color: #4CAF50;
+    }
+
+    .hunger {
+      background-color: #FF6347;
+    }
+
+    .background-music {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 14px;
+      background-color: #000;
+      color: white;
+      padding: 5px;
+      border-radius: 5px;
+    }
+
+    /* Keyframe Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes bounce {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    /* Background color transitions based on status */
+    @keyframes happyBackground {
+      0% { background-color: #e0f7fa; }
+      100% { background-color: #b2ebf2; }
+    }
+
+    @keyframes sadBackground {
+      0% { background-color: #e0f7fa; }
+      100% { background-color: #ffccbc; }
+    }
+
+    /* Confetti animation */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #ffeb3b;
+      opacity: 0.8;
+      animation: confetti-fall 2s infinite;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(600px);
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <audio id="bg-music" src="https://www.bensound.com/bensound-music/bensound-littleidea.mp3" loop autoplay></audio>
+  <h1>Virtual Paws</h1>
+  
+  <div class="container">
+
+    
+    <div id="avatar-selection-screen" class="screen active">
+      <h1>Select Your Pet Avatar 🐾</h1>
+      <div class="avatar-navigation">
+        <button id="left-arrow" onclick="prevAvatar()">⬅️</button>
+        <div class="pet-avatar">
+          <img id="avatar-img" src="https://img.icons8.com/doodle/480/dog.png" alt="Pet Avatar">
+        </div>
+        <button id="right-arrow" onclick="nextAvatar()">➡️</button>
+      </div>
+      <button onclick="selectAvatar()">Select Avatar</button>
+    </div>
+
+   
+    <div id="name-screen" class="screen">
+      <h1>Give Your Pet a Name</h1>
+      <div class="pet-avatar">
+        <img id="selected-avatar-img" src="" alt="Selected Pet Avatar">
+      </div>
+      <input type="text" id="pet-name-input" placeholder="Enter pet name" />
+      <button onclick="setPetName()">Submit Name</button>
+    </div>
+
+   
+    <div id="home-screen" class="screen">
+      <h1>Virtual Pet</h1>
+      <div class="pet-avatar">
+        <img id="home-avatar-img" src="" alt="Pet Avatar">
+      </div>
+      <div id="pet-name-display">Name: </div>
+      <div class="controls">
+        <button id="feed">Feed</button>
+        <button id="play">Play</button>
+        <button id="sleep">Sleep</button>
+      </div>
+      <p id="status">Status: Happy</p>
+      <div class="level">Happiness Level: <span id="happiness-level">100</span>%</div>
+      <div class="level-bar"><div class="happiness" id="happiness-bar" style="width: 100%;"></div></div>
+      <div class="level">Hunger Level: <span id="hunger-level">0</span>%</div>
+      <div class="level-bar"><div class="hunger" id="hunger-bar" style="width: 0%;"></div></div>
+    </div>
+    
+  </div>
+  <button id="games">mini-games</button>
+  <button id="chat">chat</button>
+  <script>
+    let avatars = [
+      'https://img.icons8.com/doodle/480/dog.png',
+      'https://img.icons8.com/doodle/480/cat.png',
+      'https://img.icons8.com/doodle/480/rabbit.png'
+    ];
+    let currentAvatarIndex = 0;
+
+    function prevAvatar() {
+      currentAvatarIndex = (currentAvatarIndex - 1 + avatars.length) % avatars.length;
+      document.getElementById('avatar-img').src = avatars[currentAvatarIndex];
+    }
+
+    function nextAvatar() {
+      currentAvatarIndex = (currentAvatarIndex + 1) % avatars.length;
+      document.getElementById('avatar-img').src = avatars[currentAvatarIndex];
+    }
+
+    function selectAvatar() {
+      document.getElementById('selected-avatar-img').src = avatars[currentAvatarIndex];
+      switchScreen('name-screen');
+    }
+
+    function setPetName() {
+      const name = document.getElementById('pet-name-input').value;
+      if (name.trim() === '') {
+        alert("Please enter the name.");
+        return; // Exit the function if the name is empty
+      }
+      document.getElementById('pet-name-display').innerText = `Name: ${name}`;
+      document.getElementById('home-avatar-img').src = avatars[currentAvatarIndex];
+      switchScreen('home-screen');
+    }
+
+    function switchScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      document.getElementById(screenId).classList.add('active');
+    }
+
+   
+    const statusText = document.getElementById('status');
+    const happinessBar = document.getElementById('happiness-bar');
+    const hungerBar = document.getElementById('hunger-bar');
+    const happinessLevelText = document.getElementById('happiness-level');
+    const hungerLevelText = document.getElementById('hunger-level');
+
+    let happinessLevel = 100;
+    let hungerLevel = 0;
+
+    document.getElementById('feed').addEventListener('click', () => {
+      hungerLevel = Math.max(hungerLevel - 20, 0);
+      updateBars('Eating...');
+      addConfetti(); 
+    });
+
+    document.getElementById('play').addEventListener('click', () => {
+      happinessLevel = Math.min(happinessLevel + 10, 100);
+      updateBars('Playing!');
+      document.body.style.animation = 'happyBackground 5s forwards'; 
+    });
+
+    document.getElementById('sleep').addEventListener('click', () => {
+      happinessLevel = Math.max(happinessLevel - 10, 0);
+      updateBars('Sleeping...');
+    });
+
+    function updateBars(status) {
+      statusText.innerText = `Status: ${status}`;
+      happinessBar.style.width = `${happinessLevel}%`;
+      hungerBar.style.width = `${hungerLevel}%`;
+      happinessLevelText.innerText = happinessLevel;
+      hungerLevelText.innerText = hungerLevel;
+
+      if (hungerLevel < 100) hungerLevel += 5;
+      if (hungerLevel > 100) hungerLevel = 100;
+
+      setTimeout(() => {
+        statusText.innerText = 'Status: Happy';
+        document.body.style.animation = ''; // Reset background animation
+      }, 1000);
+    }
+
+    function addConfetti() {
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = `${Math.random() * 100}vw`;
+        confetti.style.animationDelay = `${Math.random() * 2}s`;
+        document.body.appendChild(confetti);
+
+        // Remove confetti after animation
+        setTimeout(() => {
+          document.body.removeChild(confetti);
+        }, 3000);
+      }
+    }
+
+    setInterval(updateBars, 5000);
+    
+    // Mini-Games Button Event
+    document.getElementById('games').addEventListener('click', () => {
+      window.location.href = 'games.html'; // Redirects to games.html
+    });
+
+    // Chat Button Event (optional: modify this logic to handle chat)
+    document.getElementById('chat').addEventListener('click', () => {
+      window.location.href = 'chat.html';
+    });
+
+  </script>
+
+</body>
+</html>
